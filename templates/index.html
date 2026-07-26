@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Prédiction du risque de décrochage scolaire</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 30px; color: #2c3e50; }
+        .container { max-width: 780px; margin: 0 auto; background: white; border-radius: 10px; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        h1 { font-size: 22px; text-align: center; margin-bottom: 20px; }
+        fieldset { border: 1px solid #e0e4e8; border-radius: 8px; margin-bottom: 18px; padding: 15px 20px; }
+        legend { font-weight: 600; color: #34495e; padding: 0 8px; font-size: 14px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        label { display: block; font-size: 13px; margin-bottom: 4px; color: #555; }
+        select, input[type=number] { width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #ccd1d9; box-sizing: border-box; font-size: 13px; }
+        button { width: 100%; padding: 12px; background: #2c74d8; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #1f5cb0; }
+        .result { margin-top: 20px; padding: 18px; border-radius: 8px; text-align: center; font-size: 16px; }
+        .risk-high { background: #fdecea; border: 1px solid #f5b7b1; color: #c0392b; }
+        .risk-low { background: #eafaf1; border: 1px solid #a9dfbf; color: #1e8449; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prédiction du risque de décrochage scolaire</h1>
+
+        <form method="POST" action="/predict">
+
+            <fieldset>
+                <legend>Informations générales</legend>
+                <div class="grid">
+                    <div><label>École</label>
+                        <select name="school"><option value="0">Gabriel Pereira</option><option value="1">Mousinho da Silveira</option></select>
+                    </div>
+                    <div><label>Sexe</label>
+                        <select name="sex"><option value="0">Féminin</option><option value="1">Masculin</option></select>
+                    </div>
+                    <div><label>Âge</label>
+                        <input type="number" name="age" min="15" max="22" value="17" required>
+                    </div>
+                    <div><label>Adresse</label>
+                        <select name="address"><option value="0">Urbaine</option><option value="1">Rurale</option></select>
+                    </div>
+                    <div><label>Taille famille</label>
+                        <select name="famsize"><option value="0">≤ 3</option><option value="1">> 3</option></select>
+                    </div>
+                    <div><label>Statut parents</label>
+                        <select name="Pstatus"><option value="0">Ensemble</option><option value="1">Séparés</option></select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Contexte familial</legend>
+                <div class="grid">
+                    <div><label>Éducation mère (0-4)</label><input type="number" name="Medu" min="0" max="4" value="2" required></div>
+                    <div><label>Éducation père (0-4)</label><input type="number" name="Fedu" min="0" max="4" value="2" required></div>
+                    <div><label>Métier mère</label>
+                        <select name="Mjob">
+                            <option value="at_home">Au foyer</option><option value="health">Santé</option>
+                            <option value="services">Services</option><option value="teacher">Enseignante</option>
+                            <option value="other" selected>Autre</option>
+                        </select>
+                    </div>
+                    <div><label>Métier père</label>
+                        <select name="Fjob">
+                            <option value="at_home">Au foyer</option><option value="health">Santé</option>
+                            <option value="services">Services</option><option value="teacher">Enseignant</option>
+                            <option value="other" selected>Autre</option>
+                        </select>
+                    </div>
+                    <div><label>Tuteur</label>
+                        <select name="guardian"><option value="mother">Mère</option><option value="father">Père</option><option value="other">Autre</option></select>
+                    </div>
+                    <div><label>Relations familiales (1-5)</label><input type="number" name="famrel" min="1" max="5" value="4" required></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Scolarité</legend>
+                <div class="grid">
+                    <div><label>Raison du choix de l'école</label>
+                        <select name="reason"><option value="course">Préférence</option><option value="home">Proximité</option><option value="reputation">Réputation</option><option value="other">Autre</option></select>
+                    </div>
+                    <div><label>Temps de trajet (1-4)</label><input type="number" name="traveltime" min="1" max="4" value="1" required></div>
+                    <div><label>Temps d'étude (1-4)</label><input type="number" name="studytime" min="1" max="4" value="2" required></div>
+                    <div><label>Échecs passés</label><input type="number" name="failures" min="0" max="3" value="0" required></div>
+                    <div><label>Absences</label><input type="number" name="absences" min="0" max="93" value="4" required></div>
+                    <div><label>Soutien scolaire</label><select name="schoolsup"><option value="0">Non</option><option value="1">Oui</option></select></div>
+                    <div><label>Soutien familial</label><select name="famsup"><option value="0">Non</option><option value="1">Oui</option></select></div>
+                    <div><label>Cours payants</label><select name="paid"><option value="0">Non</option><option value="1">Oui</option></select></div>
+                    <div><label>Veut études supérieures</label><select name="higher"><option value="1">Oui</option><option value="0">Non</option></select></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Vie sociale et bien-être</legend>
+                <div class="grid">
+                    <div><label>Activités extra-scolaires</label><select name="activities"><option value="0">Non</option><option value="1">Oui</option></select></div>
+                    <div><label>Crèche/maternelle</label><select name="nursery"><option value="1">Oui</option><option value="0">Non</option></select></div>
+                    <div><label>Internet à la maison</label><select name="internet"><option value="1">Oui</option><option value="0">Non</option></select></div>
+                    <div><label>Relation amoureuse</label><select name="romantic"><option value="0">Non</option><option value="1">Oui</option></select></div>
+                    <div><label>Temps libre (1-5)</label><input type="number" name="freetime" min="1" max="5" value="3" required></div>
+                    <div><label>Sorties amis (1-5)</label><input type="number" name="goout" min="1" max="5" value="3" required></div>
+                    <div><label>Alcool semaine (1-5)</label><input type="number" name="Dalc" min="1" max="5" value="1" required></div>
+                    <div><label>Alcool weekend (1-5)</label><input type="number" name="Walc" min="1" max="5" value="1" required></div>
+                    <div><label>État de santé (1-5)</label><input type="number" name="health" min="1" max="5" value="4" required></div>
+                </div>
+            </fieldset>
+
+            <button type="submit">Prédire le risque de décrochage</button>
+        </form>
+
+        {% if result %}
+            {% if result.prediction == 1 %}
+                <div class="result risk-high"><strong>Risque : ÉLEVÉ</strong><br>Probabilité : {{ result.proba }}%</div>
+            {% else %}
+                <div class="result risk-low"><strong>Risque : FAIBLE</strong><br>Probabilité : {{ result.proba }}%</div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
